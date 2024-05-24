@@ -31,12 +31,9 @@ func (h *Handler) Process(ctx telebot.Context) error {
 	)
 
 	log.Info("starting process text")
-	result, err := h.textService.Process(command.TextProcess{Content: ctx.Message().Text})
+	result, err := h.textService.Process(command.TextProcess{UserID: ctx.Message().Sender.ID, Content: ctx.Message().Text})
 	if err != nil {
 		log.Error("failed to process text", slog.String("error", err.Error()))
-		if result == "" {
-			result = "Я не понял ваш запрос("
-		}
 	}
 
 	log.Info("sending message")

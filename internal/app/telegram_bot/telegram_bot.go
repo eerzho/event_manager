@@ -6,11 +6,14 @@ import (
 	"event_manager/internal/ai"
 	"event_manager/internal/app_log"
 	"event_manager/internal/config"
+	"event_manager/internal/database"
 	commandH "event_manager/internal/handler/telegram/command"
 	textH "event_manager/internal/handler/telegram/text"
+	"event_manager/internal/repository/mongo/user_request"
 	aiS "event_manager/internal/service/ai/chat_gpt"
 	calendarS "event_manager/internal/service/calendar/google"
 	textS "event_manager/internal/service/text"
+	userRequestS "event_manager/internal/service/user_request"
 	"gopkg.in/telebot.v3"
 )
 
@@ -43,13 +46,15 @@ func Run() error {
 }
 
 func setupHandlers(bot *telebot.Bot) {
+	userRequestRepository := user_request.New(database.Db().Mongo)
 
-	calendarService := calendarS.New(config.Cfg().GoogleCalendar.Url)
 	aiService := aiS.New(ai.Client().GPT, config.Cfg().GPT.Prompt)
-	textService := textS.New(aiService, calendarService)
+	calendarService := calendarS.New(config.Cfg().GoogleCalendar.Url)
+	userRequestService := userRequestS.New(userRequestRepository)
+	textService := textS.New(aiService, calendarService, userRequestService)
 
-	textHandler := textH.New(textService)
 	commandHandler := commandH.New()
+	textHandler := textH.New(textService)
 
 	bot.Handle("/start", commandHandler.Start)
 	bot.Handle(telebot.OnText, textHandler.Process)

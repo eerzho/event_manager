@@ -6,10 +6,11 @@ import (
 )
 
 type Config struct {
+	Mongo          Mongo
 	Logger         Logger
 	GPT            GPT
-	GoogleCalendar GoogleCalendar
 	Telegram       Telegram
+	GoogleCalendar GoogleCalendar
 }
 
 type Logger struct {
@@ -28,6 +29,15 @@ type GoogleCalendar struct {
 type Telegram struct {
 	Token      string `env:"TELEGRAM_TOKEN"`
 	WebhookUrl string `env:"TELEGRAM_WEBHOOK_URL"`
+}
+
+type Mongo struct {
+	DB       string `env:"MONGO_DB"`
+	Host     string `env:"MONGO_HOST"`
+	Port     string `env:"MONGO_PORT"`
+	UIPort   string `env:"MONGO_UI_PORT"`
+	User     string `env:"MONGO_USER"`
+	Password string `env:"MONGO_PASSWORD"`
 }
 
 var cfg Config
