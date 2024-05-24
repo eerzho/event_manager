@@ -46,16 +46,16 @@ func (s *Service) Process(cmd command.TextProcess) (string, error) {
 
 	var systemMessage string
 
-	defer func() {
-		log.Info("saving user request")
-		if _, err := s.userRequestService.Store(command.UserRequestStore{
-			SenderID:      cmd.UserID,
-			SenderMessage: cmd.Content,
-			SystemMessage: systemMessage,
-		}); err != nil {
-			log.Error("failed to save user request", slog.String("error", err.Error()))
-		}
-	}()
+	//defer func() {
+	//	log.Info("saving user request")
+	//	if _, err := s.userRequestService.Store(command.UserRequestStore{
+	//		SenderID:      cmd.UserID,
+	//		SenderMessage: cmd.Content,
+	//		SystemMessage: systemMessage,
+	//	}); err != nil {
+	//		log.Error("failed to save user request", slog.String("error", err.Error()))
+	//	}
+	//}()
 
 	log.Info("generating json")
 	jsonString, err := s.aiService.Json(command.AIJson{Prompt: cmd.Content})

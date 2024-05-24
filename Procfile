@@ -1,0 +1,1 @@
+web: go build -o ./cmd/app ./cmd/app && ./cmd/app/app
