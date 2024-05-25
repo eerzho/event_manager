@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -43,10 +42,6 @@ type Mongo struct {
 var cfg Config
 
 func Parse() error {
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
-
 	err := cleanenv.ReadEnv(&cfg)
 	if err != nil {
 		return err
