@@ -25,7 +25,7 @@ func (h *Handler) Start(ctx telebot.Context) error {
 	log.Info("starting \"start\" command")
 
 	log.Info("sending message")
-	if _, err := ctx.Bot().Send(ctx.Message().Sender, "Hello!"); err != nil {
+	if _, err := ctx.Bot().Send(ctx.Message().Sender, "Скорее пишите, пока AI не убежал от нас!"); err != nil {
 		log.Error("failed to send message", slog.String("error", err.Error()))
 	}
 
