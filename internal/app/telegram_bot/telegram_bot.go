@@ -2,6 +2,7 @@ package telegram_bot
 
 import (
 	"log/slog"
+	"os"
 
 	"event_manager/internal/ai"
 	"event_manager/internal/app_log"
@@ -22,11 +23,16 @@ func Run() error {
 
 	log := app_log.Logger().With(slog.String("op", op))
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	log.Info("configuring telegram bot")
 	bot, err := telebot.NewBot(telebot.Settings{
 		Token: config.Cfg().Telegram.Token,
 		Poller: &telebot.Webhook{
-			Listen: "0.0.0.0:60",
+			Listen: "0.0.0.0:" + port,
 			Endpoint: &telebot.WebhookEndpoint{
 				PublicURL: config.Cfg().Telegram.WebhookUrl,
 			},
