@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"fmt"
 
 	"event_manager/internal/config"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,14 +15,7 @@ type Database struct {
 var db Database
 
 func Connect() error {
-	uri := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%s",
-		config.Cfg().Mongo.User,
-		config.Cfg().Mongo.Password,
-		config.Cfg().Mongo.Host,
-		config.Cfg().Mongo.Port,
-	)
-	opts := options.Client().ApplyURI(uri)
+	opts := options.Client().ApplyURI(config.Cfg().Mongo.URL)
 	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
 		return err

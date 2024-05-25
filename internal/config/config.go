@@ -5,6 +5,7 @@ import (
 )
 
 type Config struct {
+	Port           string `env:"PORT" env-default:"8080"`
 	Mongo          Mongo
 	Logger         Logger
 	GPT            GPT
@@ -31,12 +32,8 @@ type Telegram struct {
 }
 
 type Mongo struct {
-	DB       string `env:"MONGO_DB"`
-	Host     string `env:"MONGO_HOST"`
-	Port     string `env:"MONGO_PORT"`
-	UIPort   string `env:"MONGO_UI_PORT"`
-	User     string `env:"MONGO_USER"`
-	Password string `env:"MONGO_PASSWORD"`
+	URL string `env:"MONGO_URL"`
+	DB  string `env:"MONGO_DB"`
 }
 
 var cfg Config
