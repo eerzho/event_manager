@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"event_manager/internal/ai"
@@ -29,8 +28,6 @@ func main() {
 	if err := ai.Connect(); err != nil {
 		log.Fatalf("failed to connect to ai: %v", err)
 	}
-
-	fmt.Println(config.Cfg().Port)
 
 	log.Print("running telegram bot")
 	if err := telegram_bot.Run(); err != nil {
