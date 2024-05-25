@@ -2,6 +2,7 @@ package telegram_bot
 
 import (
 	"log/slog"
+	"time"
 
 	"event_manager/internal/ai"
 	"event_manager/internal/app_log"
@@ -37,6 +38,8 @@ func Run() error {
 		return err
 	}
 
+	bot.Use(limit)
+
 	setupHandlers(bot)
 
 	log.Info("starting telegram bot")
@@ -58,4 +61,25 @@ func setupHandlers(bot *telebot.Bot) {
 
 	bot.Handle("/start", commandHandler.Start)
 	bot.Handle(telebot.OnText, textHandler.Process)
+}
+
+var (
+	visitors = make(map[int64]time.Time)
+)
+
+func limit(next telebot.HandlerFunc) telebot.HandlerFunc {
+	return func(ctx telebot.Context) error {
+		userId := ctx.Message().Sender.ID
+		now := time.Now()
+
+		if lastVisit, found := visitors[userId]; found && now.Sub(lastVisit) < (10*time.Second) {
+			options := telebot.SendOptions{
+				ReplyTo: ctx.Message(),
+			}
+			return ctx.Send("Вы отправляете сообщения слишком часто. Пожалуйста, подождите.", &options)
+		}
+
+		visitors[userId] = now
+		return next(ctx)
+	}
 }

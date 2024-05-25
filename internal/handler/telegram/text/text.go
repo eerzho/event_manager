@@ -41,10 +41,6 @@ func (h *Handler) Process(ctx telebot.Context) error {
 		ParseMode: telebot.ModeMarkdown,
 		ReplyTo:   ctx.Message(),
 	}
-	if _, err = ctx.Bot().Send(ctx.Message().Sender, result, &options); err != nil {
-		log.Error("failed to send message", slog.String("error", err.Error()))
-		return err
-	}
 
-	return nil
+	return ctx.Send(result, &options)
 }
