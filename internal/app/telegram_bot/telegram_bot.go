@@ -26,7 +26,7 @@ func Run() error {
 	bot, err := telebot.NewBot(telebot.Settings{
 		Token: config.Cfg().Telegram.Token,
 		Poller: &telebot.Webhook{
-			Listen: "0.0.0.0:8080",
+			Listen: "0.0.0.0:60",
 			Endpoint: &telebot.WebhookEndpoint{
 				PublicURL: config.Cfg().Telegram.WebhookUrl,
 			},
