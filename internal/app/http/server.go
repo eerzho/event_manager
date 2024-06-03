@@ -7,6 +7,7 @@ import (
 
 	"event_manager/config"
 	"event_manager/internal/handler/http/v1"
+	"event_manager/internal/service"
 	"event_manager/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -15,10 +16,10 @@ type Server struct {
 	server *http.Server
 }
 
-func New(l logger.Logger, cfg *config.Config) *Server {
+func New(l logger.Logger, cfg *config.Config, tgUserService *service.TGUser, tgMessageService *service.TGMessage) *Server {
 	router := gin.Default()
 
-	v1.NewHandler(l, router)
+	v1.NewHandler(l, router, tgUserService, tgMessageService)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.HTTP.Port,

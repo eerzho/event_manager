@@ -43,7 +43,7 @@ func main() {
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService)
 
 	//handler
-	httpServer := http.New(l, cfg)
+	httpServer := http.New(l, cfg, tgUserService, tgMessageService)
 	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
 
 	if err != nil {

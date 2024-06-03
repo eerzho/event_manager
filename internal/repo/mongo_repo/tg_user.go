@@ -10,7 +10,6 @@ import (
 	"event_manager/pkg/mongo"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -81,7 +80,7 @@ func (t *TGUser) Create(ctx context.Context, user *model.TGUser) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	if _, ok := result.InsertedID.(primitive.ObjectID); !ok {
+	if _, ok := result.InsertedID.(string); !ok {
 		return fmt.Errorf("%s: document is nil", op)
 	}
 
