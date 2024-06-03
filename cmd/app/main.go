@@ -1,36 +1,72 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"event_manager/internal/ai"
-	"event_manager/internal/app/telegram_bot"
-	"event_manager/internal/app_log"
-	"event_manager/internal/config"
-	"event_manager/internal/database"
+	"event_manager/config"
+	"event_manager/internal/app/http"
+	"event_manager/internal/app/telegram"
+	"event_manager/internal/repo/mongo_repo"
+	"event_manager/internal/service"
+	"event_manager/pkg/logger"
+	"event_manager/pkg/mongo"
 )
 
 func main() {
-	log.Print("parsing configuration")
-	if err := config.Parse(); err != nil {
-		log.Fatalf("failed to parse configuration: %v", err)
+	const op = "./cmd/app::main"
+
+	cfg, err := config.New()
+	if err != nil {
+		log.Fatalf("%s: %v", op, err)
 	}
 
-	log.Print("set upping logger")
-	app_log.Setup(config.Cfg().Logger.Level)
-
-	log.Print("connecting to database")
-	if err := database.Connect(); err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
+	mg, err := mongo.New(cfg.Mongo.URL, cfg.Mongo.DB)
+	if err != nil {
+		log.Fatalf("%s: %v", op, err)
 	}
 
-	log.Print("connecting to ai")
-	if err := ai.Connect(); err != nil {
-		log.Fatalf("failed to connect to ai: %v", err)
+	// repo
+	tgUserRepo := mongo_repo.NewTGUser(mg)
+	tgMessageRepo := mongo_repo.NewTGMessage(mg)
+
+	// service
+	tgUserService := service.NewTGUser(tgUserRepo)
+	eventService := service.NewEvent(cfg.GPT.Token, cfg.GPT.Prompt)
+	googleCalendarService := service.NewGoogleCalendar(cfg.Google.CalendarURL)
+	tgMessageService := service.NewTGMessage(tgMessageRepo, tgUserService, eventService, googleCalendarService)
+
+	l := logger.New(cfg.Level)
+	httpServer := http.New(l, cfg)
+	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
+	if err != nil {
+		log.Fatalf("%s: %s", op, err)
 	}
 
-	log.Print("running telegram bot")
-	if err := telegram_bot.Run(); err != nil {
-		log.Fatalf("failed to start telegram bot: %v", err)
-	}
+	stopChan := make(chan os.Signal, 1)
+	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		httpServer.Run()
+	}()
+	go func() {
+		telegramBot.Run()
+	}()
+
+	log.Printf("%s: application started", op)
+	<-stopChan
+
+	log.Printf("%s: shutting down", op)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	httpServer.Shutdown(ctx)
+	telegramBot.Shutdown()
+
+	log.Printf("%s: application stopped", op)
 }
