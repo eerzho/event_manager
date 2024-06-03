@@ -29,6 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s: %v", op, err)
 	}
+	defer mg.Close()
 
 	l := logger.New(cfg.Level)
 
