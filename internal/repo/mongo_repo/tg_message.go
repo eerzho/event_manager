@@ -6,6 +6,7 @@ import (
 
 	"event_manager/internal/model"
 	"event_manager/pkg/mongo"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -22,7 +23,7 @@ func NewTGMessage(m *mongo.Mongo) *TGMessage {
 func (t *TGMessage) Create(ctx context.Context, message *model.TGMessage) error {
 	const op = "./internal/repo/mongo_repo/tg_message::Create"
 
-	message.ID = primitive.NewObjectID()
+	message.ID = uuid.New().String()
 
 	result, err := t.DB.Collection(TgMessageTable).InsertOne(ctx, message)
 	if err != nil {

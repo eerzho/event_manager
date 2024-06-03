@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"event_manager/internal/model"
+	"event_manager/pkg/logger"
 )
 
 type (
@@ -13,6 +14,7 @@ type (
 	}
 
 	TGMessage struct {
+		l                     logger.Logger
 		repo                  TGMessageRepo
 		tgUserService         *TGUser
 		eventService          *Event
@@ -20,8 +22,9 @@ type (
 	}
 )
 
-func NewTGMessage(repo TGMessageRepo, tgUserService *TGUser, eventService *Event, googleCalendarService *GoogleCalendar) *TGMessage {
+func NewTGMessage(l logger.Logger, repo TGMessageRepo, tgUserService *TGUser, eventService *Event, googleCalendarService *GoogleCalendar) *TGMessage {
 	return &TGMessage{
+		l:                     l,
 		repo:                  repo,
 		tgUserService:         tgUserService,
 		eventService:          eventService,
@@ -29,31 +32,27 @@ func NewTGMessage(repo TGMessageRepo, tgUserService *TGUser, eventService *Event
 	}
 }
 
-func (t *TGMessage) Text(ctx context.Context, user *model.TGUser, message *model.TGMessage) error {
-	const op = "./internal/service/tg_messag1e::Text"
+func (t *TGMessage) Text(ctx context.Context, message *model.TGMessage) error {
+	const op = "./internal/service/tg_message::Text"
 
-	usr, err := t.tgUserService.ByChatID(ctx, message.ChatID)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	if usr == nil {
-		err = t.tgUserService.Create(ctx, user)
-		if err != nil {
-			return fmt.Errorf("%s: %w", op, err)
+	defer func() {
+		if err := t.repo.Create(ctx, message); err != nil {
+			t.l.Error(fmt.Errorf("%s: %w", op, err))
 		}
-	}
+	}()
 
-	event, err := t.eventService.CreateFromText(ctx, message.Text)
-	if err != nil {
+	var event model.Event
+	if err := t.eventService.CreateFromText(ctx, &event, message.Text); err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, err)
 	}
-
-	message.Url = t.googleCalendarService.CreateUrl(ctx, event)
-
-	err = t.repo.Create(ctx, message)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+	if event.Message != "" {
+		message.Answer = event.Message
+		return nil
 	}
+
+	url := t.googleCalendarService.CreateUrl(ctx, &event)
+	message.Answer = "[Google Calendar](" + url + ")"
 
 	return nil
 }

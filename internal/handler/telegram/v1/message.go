@@ -14,12 +14,14 @@ import (
 type message struct {
 	l                logger.Logger
 	tgMessageService *service.TGMessage
+	tgUserService    *service.TGUser
 }
 
-func newMessage(l logger.Logger, bot *telebot.Bot, tgMessageService *service.TGMessage) *message {
+func newMessage(l logger.Logger, bot *telebot.Bot, tgMessageService *service.TGMessage, tgUserService *service.TGUser) *message {
 	m := &message{
 		l:                l,
 		tgMessageService: tgMessageService,
+		tgUserService:    tgUserService,
 	}
 
 	bot.Handle(telebot.OnText, m.text)
@@ -31,19 +33,22 @@ func (m *message) text(ctx telebot.Context) error {
 	const op = "./internal/handler/telegram/v1/message::text"
 
 	chatID := strconv.FormatInt(ctx.Sender().ID, 10)
+
 	user := model.TGUser{
 		Username: ctx.Sender().Username,
 		ChatID:   chatID,
 	}
+	if err := m.tgUserService.Create(context.Background(), &user); err != nil {
+		m.l.Error(fmt.Errorf("%s: %w", op, err))
+	}
+
 	msg := model.TGMessage{
 		Text:   ctx.Message().Text,
 		ChatID: chatID,
 	}
-
-	err := m.tgMessageService.Text(context.Background(), &user, &msg)
-	if err != nil {
+	if err := m.tgMessageService.Text(context.Background(), &msg); err != nil {
 		m.l.Error(fmt.Errorf("%s: %w", op, err))
-		return ctx.Send("Что-то пошло не так (")
+		return ctx.Send("Что-то пошло не так ((")
 	}
 
 	options := telebot.SendOptions{
@@ -51,5 +56,5 @@ func (m *message) text(ctx telebot.Context) error {
 		ReplyTo:   ctx.Message(),
 	}
 
-	return ctx.Send("[Google Calendar]("+msg.Url+")", &options)
+	return ctx.Send(msg.Answer, &options)
 }

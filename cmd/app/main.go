@@ -30,19 +30,22 @@ func main() {
 		log.Fatalf("%s: %v", op, err)
 	}
 
+	l := logger.New(cfg.Level)
+
 	// repo
 	tgUserRepo := mongo_repo.NewTGUser(mg)
 	tgMessageRepo := mongo_repo.NewTGMessage(mg)
 
 	// service
-	tgUserService := service.NewTGUser(tgUserRepo)
-	eventService := service.NewEvent(cfg.GPT.Token, cfg.GPT.Prompt)
+	tgUserService := service.NewTGUser(l, tgUserRepo)
+	eventService := service.NewEvent(l, cfg.GPT.Token, cfg.GPT.Prompt)
 	googleCalendarService := service.NewGoogleCalendar(cfg.Google.CalendarURL)
-	tgMessageService := service.NewTGMessage(tgMessageRepo, tgUserService, eventService, googleCalendarService)
+	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService)
 
-	l := logger.New(cfg.Level)
+	//handler
 	httpServer := http.New(l, cfg)
 	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
+
 	if err != nil {
 		log.Fatalf("%s: %s", op, err)
 	}

@@ -8,5 +8,5 @@ import (
 
 func NewHandler(l logger.Logger, bot *telebot.Bot, tgUserService *service.TGUser, tgMessageService *service.TGMessage) {
 	newCommand(l, bot, tgUserService)
-	newMessage(l, bot, tgMessageService)
+	newMessage(l, bot, tgMessageService, tgUserService)
 }

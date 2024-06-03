@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"event_manager/internal/failure"
 	"event_manager/internal/model"
+	"event_manager/pkg/logger"
 )
 
 type (
@@ -15,12 +18,13 @@ type (
 	}
 
 	TGUser struct {
+		l    logger.Logger
 		repo TGUserRepo
 	}
 )
 
-func NewTGUser(repo TGUserRepo) *TGUser {
-	return &TGUser{repo: repo}
+func NewTGUser(l logger.Logger, repo TGUserRepo) *TGUser {
+	return &TGUser{l: l, repo: repo}
 }
 
 func (t *TGUser) All(ctx context.Context) ([]model.TGUser, error) {
@@ -28,6 +32,7 @@ func (t *TGUser) All(ctx context.Context) ([]model.TGUser, error) {
 
 	users, err := t.repo.All(ctx)
 	if err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -39,6 +44,7 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 
 	user, err := t.repo.ByChatID(ctx, chatID)
 	if err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -48,8 +54,21 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 func (t *TGUser) Create(ctx context.Context, user *model.TGUser) error {
 	const op = "./internal/service/tg_user::Create"
 
-	err := t.repo.Create(ctx, user)
+	exUser, err := t.ByChatID(ctx, user.ChatID)
 	if err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
+		if !errors.Is(err, failure.ErrNotFound) {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	if exUser != nil {
+		user = exUser
+		return nil
+	}
+
+	if err = t.repo.Create(ctx, user); err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, err)
 	}
 

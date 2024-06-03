@@ -8,23 +8,26 @@ import (
 	"time"
 
 	"event_manager/internal/model"
+	"event_manager/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/sashabaranov/go-openai"
 )
 
 type Event struct {
+	l      logger.Logger
 	openai *openai.Client
 	prompt string
 }
 
-func NewEvent(token, prompt string) *Event {
+func NewEvent(l logger.Logger, token, prompt string) *Event {
 	return &Event{
+		l:      l,
 		openai: openai.NewClient(token),
 		prompt: prompt,
 	}
 }
 
-func (e *Event) CreateFromText(ctx context.Context, text string) (*model.Event, error) {
+func (e *Event) CreateFromText(ctx context.Context, event *model.Event, text string) error {
 	const op = "./internal/service/event::CreateFromText"
 
 	messages := []openai.ChatCompletionMessage{
@@ -37,27 +40,26 @@ func (e *Event) CreateFromText(ctx context.Context, text string) (*model.Event, 
 	}
 	resp, err := e.openai.CreateChatCompletion(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if len(resp.Choices) < 1 {
-		return nil, fmt.Errorf("%s: choices is empty", op)
+		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		return fmt.Errorf("%s: choices is empty", op)
 	}
 
 	choice := resp.Choices[0]
 	jsonString := strings.Replace(strings.Replace(choice.Message.Content, "json", "", -1), "`", "", -1)
 
-	var event model.Event
 	if err = json.Unmarshal([]byte(jsonString), &event); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		return fmt.Errorf("%s: %w", op, err)
 	}
 	if err = validator.New().Struct(event); err != nil {
-		message := "AI не понимает вас, сформулируйте запрос более точно."
-		if event.Message != "" {
-			message = event.Message
-		}
-		return nil, fmt.Errorf("%s: %s", op, message)
+		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		return nil
 	}
 
-	return &event, nil
+	return nil
 }

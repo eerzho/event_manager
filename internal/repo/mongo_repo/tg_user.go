@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	"event_manager/internal/failure"
 	"event_manager/internal/model"
 	"event_manager/pkg/mongo"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
@@ -61,7 +63,7 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 	err := t.DB.Collection(TgUserTable).FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongoDriver.ErrNoDocuments) {
-			return nil, nil
+			return nil, fmt.Errorf("%s: %w", op, failure.ErrNotFound)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -72,7 +74,7 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 func (t *TGUser) Create(ctx context.Context, user *model.TGUser) error {
 	const op = "./internal/repo/mongo_repo/tg_user::Create"
 
-	user.ID = primitive.NewObjectID()
+	user.ID = uuid.New().String()
 
 	result, err := t.DB.Collection(TgUserTable).InsertOne(ctx, user)
 	if err != nil {
