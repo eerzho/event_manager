@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"event_manager/internal/failure"
-	"event_manager/internal/model"
-	"event_manager/pkg/mongo"
+	"github.com/eerzho/event_manager/internal/failure"
+	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/pkg/mongo"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"

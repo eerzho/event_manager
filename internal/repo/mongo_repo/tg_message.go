@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"event_manager/internal/model"
-	"event_manager/pkg/mongo"
+	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/pkg/mongo"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"

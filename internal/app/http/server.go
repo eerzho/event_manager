@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"event_manager/config"
-	"event_manager/internal/handler/http/v1"
-	"event_manager/internal/service"
-	"event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/config"
+	"github.com/eerzho/event_manager/internal/handler/http/v1"
+	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 

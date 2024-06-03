@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"event_manager/internal/model"
-	"event_manager/internal/service"
-	"event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/logger"
 	"gopkg.in/telebot.v3"
 )
 

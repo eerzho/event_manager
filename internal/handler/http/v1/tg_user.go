@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"event_manager/internal/service"
-	"event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 

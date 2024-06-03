@@ -5,10 +5,10 @@ import (
 	"log"
 	"strings"
 
-	"event_manager/config"
-	v1 "event_manager/internal/handler/telegram/v1"
-	"event_manager/internal/service"
-	"event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/config"
+	v1 "github.com/eerzho/event_manager/internal/handler/telegram/v1"
+	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/logger"
 	"gopkg.in/telebot.v3"
 )
 

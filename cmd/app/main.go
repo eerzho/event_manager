@@ -8,13 +8,13 @@ import (
 	"syscall"
 	"time"
 
-	"event_manager/config"
-	"event_manager/internal/app/http"
-	"event_manager/internal/app/telegram"
-	"event_manager/internal/repo/mongo_repo"
-	"event_manager/internal/service"
-	"event_manager/pkg/logger"
-	"event_manager/pkg/mongo"
+	"github.com/eerzho/event_manager/config"
+	"github.com/eerzho/event_manager/internal/app/http"
+	"github.com/eerzho/event_manager/internal/app/telegram"
+	"github.com/eerzho/event_manager/internal/repo/mongo_repo"
+	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/pkg/mongo"
 )
 
 func main() {

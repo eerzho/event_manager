@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"event_manager/internal/model"
-	"event_manager/pkg/logger"
+	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/sashabaranov/go-openai"
 )
