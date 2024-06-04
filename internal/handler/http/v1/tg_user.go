@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/eerzho/event_manager/internal/service"
 	"github.com/eerzho/event_manager/pkg/logger"
@@ -28,12 +29,22 @@ func newTGUser(l logger.Logger, router *gin.RouterGroup, tgUserService *service.
 func (t *tgUser) all(ctx *gin.Context) {
 	const op = "./internal/handler/http/v1/tg_user::all"
 
-	users, err := t.tgUserService.All(ctx)
+	page, err := strconv.Atoi(ctx.Query("page"))
+	if err != nil {
+		page = 0
+	}
+	count, err := strconv.Atoi(ctx.Query("count"))
+	if err != nil {
+		count = 0
+	}
+
+	users, err := t.tgUserService.All(ctx, ctx.Query("username"), ctx.Query("chat_id"), page, count)
 	if err != nil {
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		errorRsp(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	ctx.JSON(http.StatusOK, users)
+	successRsp(ctx, users)
+	return
 }

@@ -12,7 +12,7 @@ import (
 
 type (
 	TGUserRepo interface {
-		All(ctx context.Context) ([]model.TGUser, error)
+		All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error)
 		ByChatID(ctx context.Context, chatID string) (*model.TGUser, error)
 		Create(ctx context.Context, user *model.TGUser) error
 	}
@@ -27,10 +27,10 @@ func NewTGUser(l logger.Logger, repo TGUserRepo) *TGUser {
 	return &TGUser{l: l, repo: repo}
 }
 
-func (t *TGUser) All(ctx context.Context) ([]model.TGUser, error) {
+func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error) {
 	const op = "./internal/service/tg_user::All"
 
-	users, err := t.repo.All(ctx)
+	users, err := t.repo.All(ctx, username, chatID, page, count)
 	if err != nil {
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return nil, fmt.Errorf("%s: %w", op, err)

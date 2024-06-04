@@ -24,18 +24,36 @@ func NewTGUser(m *mongo.Mongo) *TGUser {
 	return &TGUser{m}
 }
 
-func (t *TGUser) All(ctx context.Context) ([]model.TGUser, error) {
+func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error) {
 	const op = "./internal/repo/mongo_repo/tg_user::All"
 
 	var users []model.TGUser
+
 	filter := bson.D{}
+	if username != "" {
+		filter = append(filter, bson.E{Key: "username", Value: bson.D{bson.E{Key: "$regex", Value: fmt.Sprintf("^%s", username)}}})
+	}
+	if chatID != "" {
+		filter = append(filter, bson.E{Key: "chat_id", Value: chatID})
+	}
+
+	if page == 0 {
+		page = 1
+	}
+	if count == 0 {
+		count = 10
+	}
 	opts := options.Find()
+	opts.SetSkip(int64((page - 1) * count))
+	opts.SetLimit(int64(count))
 
 	cursor, err := t.DB.Collection(TgUserTable).Find(ctx, filter, opts)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
 
 	for cursor.Next(ctx) {
 		var user model.TGUser
