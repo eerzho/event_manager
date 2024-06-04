@@ -35,13 +35,16 @@ func (m *middleware) limiter(next telebot.HandlerFunc) telebot.HandlerFunc {
 		userId := ctx.Message().Chat.ID
 
 		m.mu.Lock()
-		if _, ok := m.activeRequest[userId]; ok {
-			m.mu.Unlock()
+		_, exists := m.activeRequest[userId]
+		if !exists {
+			m.activeRequest[userId] = struct{}{}
+		}
+		m.mu.Unlock()
+
+		if exists {
 			options := &telebot.SendOptions{ReplyTo: ctx.Message()}
 			return ctx.Send("Вы отправляете сообщения слишком часто. Пожалуйста, подождите.", options)
 		}
-		m.activeRequest[userId] = struct{}{}
-		m.mu.Unlock()
 
 		defer func() {
 			m.mu.Lock()
