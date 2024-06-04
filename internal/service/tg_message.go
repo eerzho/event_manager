@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/eerzho/event_manager/internal/failure"
 	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/logger"
 )
@@ -56,12 +58,12 @@ func (t *TGMessage) Text(ctx context.Context, message *model.TGMessage) error {
 
 	var event model.Event
 	if err := t.eventService.CreateFromText(ctx, &event, message.Text); err != nil {
+		if errors.Is(err, failure.ErrValidation) && event.Message != "" {
+			message.Answer = event.Message
+			return nil
+		}
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, err)
-	}
-	if event.Message != "" {
-		message.Answer = event.Message
-		return nil
 	}
 
 	url := t.googleCalendarService.CreateUrl(ctx, &event)

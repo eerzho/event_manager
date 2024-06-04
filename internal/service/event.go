@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/eerzho/event_manager/internal/failure"
 	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/go-playground/validator/v10"
@@ -58,7 +59,7 @@ func (e *Event) CreateFromText(ctx context.Context, event *model.Event, text str
 	}
 	if err = validator.New().Struct(event); err != nil {
 		e.l.Error(fmt.Errorf("%s: %w", op, err))
-		return nil
+		return fmt.Errorf("%s: %w", op, failure.ErrValidation)
 	}
 
 	return nil

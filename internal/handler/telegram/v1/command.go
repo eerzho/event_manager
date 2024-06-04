@@ -40,5 +40,5 @@ func (c *command) start(ctx telebot.Context) error {
 		c.l.Error(fmt.Errorf("%s: %w", op, err))
 	}
 
-	return ctx.Send("Скорее пишите, пока AI не убежал от нас!")
+	return ctx.Send("Привет! Какие у вас планы?")
 }

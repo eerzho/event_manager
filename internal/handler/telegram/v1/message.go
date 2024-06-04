@@ -17,14 +17,14 @@ type message struct {
 	tgUserService    *service.TGUser
 }
 
-func newMessage(l logger.Logger, bot *telebot.Bot, tgMessageService *service.TGMessage, tgUserService *service.TGUser) *message {
+func newMessage(l logger.Logger, mv *middleware, bot *telebot.Bot, tgMessageService *service.TGMessage, tgUserService *service.TGUser) *message {
 	m := &message{
 		l:                l,
 		tgMessageService: tgMessageService,
 		tgUserService:    tgUserService,
 	}
 
-	bot.Handle(telebot.OnText, m.text)
+	bot.Handle(telebot.OnText, m.text, mv.limiter)
 
 	return m
 }
@@ -48,7 +48,7 @@ func (m *message) text(ctx telebot.Context) error {
 	}
 	if err := m.tgMessageService.Text(context.Background(), &msg); err != nil {
 		m.l.Error(fmt.Errorf("%s: %w", op, err))
-		return ctx.Send("Что-то пошло не так ((")
+		return ctx.Send("Что-то пошло не так (")
 	}
 
 	options := telebot.SendOptions{
