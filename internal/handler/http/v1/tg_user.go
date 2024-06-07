@@ -25,6 +25,18 @@ func newTGUser(l logger.Logger, router *gin.RouterGroup, tgUserService *service.
 	return t
 }
 
+// @Summary Show users
+// @Description Show all users list
+// @Tags tg-users
+// @Accept json
+// @Produce json
+// @Param username query string false "Username"
+// @Param chat_id query string false "ChatID"
+// @Param page query int false "Page"
+// @Param count query int false "Count"
+// @Success 200 {object} successResponse{data=[]model.TGUser}
+// @Failure 500 {object} errorResponse
+// @Router /tg-users [get]
 func (t *tgUser) all(ctx *gin.Context) {
 	const op = "./internal/handler/http/v1/tg_user::all"
 
