@@ -2,7 +2,6 @@ package v1
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/eerzho/event_manager/internal/service"
@@ -41,7 +40,7 @@ func (t *tgUser) all(ctx *gin.Context) {
 	users, err := t.tgUserService.All(ctx, ctx.Query("username"), ctx.Query("chat_id"), page, count)
 	if err != nil {
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
-		errorRsp(ctx, http.StatusInternalServerError, err.Error())
+		errorRsp(ctx, err)
 		return
 	}
 

@@ -12,7 +12,7 @@ import (
 
 type (
 	TGMessageRepo interface {
-		All(ctx context.Context) ([]model.TGMessage, error)
+		All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error)
 		Create(ctx context.Context, message *model.TGMessage) error
 	}
 
@@ -35,10 +35,10 @@ func NewTGMessage(l logger.Logger, repo TGMessageRepo, tgUserService *TGUser, ev
 	}
 }
 
-func (t *TGMessage) All(ctx context.Context) ([]model.TGMessage, error) {
+func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error) {
 	const op = "./internal/service.tg_message::All"
 
-	messages, err := t.repo.All(ctx)
+	messages, err := t.repo.All(ctx, chatID, page, count)
 	if err != nil {
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
 		return nil, fmt.Errorf("%s: %w", op, err)

@@ -2,7 +2,7 @@ package v1
 
 import (
 	"fmt"
-	"net/http"
+	"strconv"
 
 	"github.com/eerzho/event_manager/internal/service"
 	"github.com/eerzho/event_manager/pkg/logger"
@@ -28,12 +28,22 @@ func newTGMessage(l logger.Logger, router *gin.RouterGroup, tgMessageService *se
 func (t *tgMessage) all(ctx *gin.Context) {
 	const op = "./internal/handler/http/v1/tg_message::all"
 
-	messages, err := t.tgMessageService.All(ctx)
+	page, err := strconv.Atoi(ctx.Query("page"))
+	if err != nil {
+		page = 0
+	}
+	count, err := strconv.Atoi(ctx.Query("count"))
+	if err != nil {
+		count = 0
+	}
+
+	messages, err := t.tgMessageService.All(ctx, ctx.Query("chatID"), page, count)
 	if err != nil {
 		t.l.Error(fmt.Errorf("%s: %w", op, err))
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		errorRsp(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, messages)
+	successRsp(ctx, messages)
+	return
 }

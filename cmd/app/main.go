@@ -43,7 +43,7 @@ func main() {
 	googleCalendarService := service.NewGoogleCalendar(cfg.Google.CalendarURL)
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService)
 
-	//handler
+	// handler
 	httpServer := http.New(l, cfg, tgUserService, tgMessageService)
 	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
 

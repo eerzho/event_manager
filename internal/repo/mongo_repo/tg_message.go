@@ -21,12 +21,24 @@ func NewTGMessage(m *mongo.Mongo) *TGMessage {
 	return &TGMessage{m}
 }
 
-func (t *TGMessage) All(ctx context.Context) ([]model.TGMessage, error) {
+func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error) {
 	const op = "./internal/repo/mongo_repo/tg_user::All"
 
 	var messages []model.TGMessage
 	filter := bson.D{}
+	if chatID != "" {
+		filter = append(filter, bson.E{Key: "chat_id", Value: chatID})
+	}
+
 	opts := options.Find()
+	if page == 0 {
+		page = 1
+	}
+	if count == 0 {
+		count = 10
+	}
+	opts.SetSkip(int64((page - 1) * count))
+	opts.SetLimit(int64(count))
 
 	cursor, err := t.DB.Collection(TgMessageTable).Find(ctx, filter, opts)
 	if err != nil {

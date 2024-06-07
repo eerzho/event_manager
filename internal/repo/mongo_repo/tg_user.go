@@ -37,13 +37,13 @@ func (t *TGUser) All(ctx context.Context, username, chatID string, page, count i
 		filter = append(filter, bson.E{Key: "chat_id", Value: chatID})
 	}
 
+	opts := options.Find()
 	if page == 0 {
 		page = 1
 	}
 	if count == 0 {
 		count = 10
 	}
-	opts := options.Find()
 	opts.SetSkip(int64((page - 1) * count))
 	opts.SetLimit(int64(count))
 
