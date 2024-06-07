@@ -20,7 +20,7 @@ func newMiddleware(l logger.Logger) *middleware {
 	}
 }
 
-func (m *middleware) limiter(next telebot.HandlerFunc) telebot.HandlerFunc {
+func (m *middleware) rateLimit(next telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(ctx telebot.Context) error {
 		userId := ctx.Message().Chat.ID
 
