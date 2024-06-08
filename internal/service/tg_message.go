@@ -51,8 +51,10 @@ func (t *TGMessage) Text(ctx context.Context, message *model.TGMessage) error {
 	const op = "./internal/service/tg_message::Text"
 
 	defer func() {
-		if err := t.repo.Create(ctx, message); err != nil {
-			t.l.Error(fmt.Errorf("%s: %w", op, err))
+		if message.Answer != "" {
+			if err := t.repo.Create(ctx, message); err != nil {
+				t.l.Error(fmt.Errorf("%s: %w", op, err))
+			}
 		}
 	}()
 
