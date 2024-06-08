@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -50,6 +51,11 @@ func New() (*Config, error) {
 
 	if err := cleanenv.ReadEnv(cfg); err != nil {
 		return nil, fmt.Errorf("./config::New: %w", err)
+	}
+
+	// heroku
+	if port := os.Getenv("PORT"); port != "" {
+		cfg.HTTP.Port = port
 	}
 
 	return cfg, nil
