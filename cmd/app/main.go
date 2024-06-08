@@ -1,15 +1,12 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/eerzho/event_manager/config"
-	"github.com/eerzho/event_manager/internal/app/http"
 	"github.com/eerzho/event_manager/internal/app/telegram"
 	"github.com/eerzho/event_manager/internal/repo/mongo_repo"
 	"github.com/eerzho/event_manager/internal/service"
@@ -44,7 +41,7 @@ func main() {
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService)
 
 	// handler
-	httpServer := http.New(l, cfg, tgUserService, tgMessageService)
+	//httpServer := http.New(l, cfg, tgUserService, tgMessageService)
 	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
 
 	if err != nil {
@@ -54,9 +51,9 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	go func() {
-		httpServer.Run()
-	}()
+	//go func() {
+	//	httpServer.Run()
+	//}()
 	go func() {
 		telegramBot.Run()
 	}()
@@ -66,10 +63,10 @@ func main() {
 
 	log.Printf("%s: shutting down", op)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	//defer cancel()
 
-	httpServer.Shutdown(ctx)
+	//httpServer.Shutdown(ctx)
 	telegramBot.Shutdown()
 
 	log.Printf("%s: application stopped", op)

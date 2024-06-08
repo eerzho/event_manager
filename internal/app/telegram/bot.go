@@ -22,7 +22,7 @@ func New(l logger.Logger, cfg *config.Config, tgUserService *service.TGUser, tgM
 	settings := telebot.Settings{
 		Token: cfg.Telegram.Token,
 		Poller: &telebot.Webhook{
-			Listen: "0.0.0.0:" + cfg.Telegram.Port,
+			Listen: "0.0.0.0:" + cfg.HTTP.Port,
 			Endpoint: &telebot.WebhookEndpoint{
 				PublicURL: url,
 			},
