@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/local/Dockerfile
+    container_name: app
+    env_file:
+      - .env
+    ports:
+      - "80:${HTTP_PORT}"
+      - "8080:${TELEGRAM_PORT}"
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+
   mongo:
     image: mongo:latest
     container_name: mongo
