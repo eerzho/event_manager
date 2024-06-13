@@ -4,7 +4,7 @@ services:
   telegram_bot:
     build:
       context: .
-      dockerfile: ./docker/telegram_bot/local.Dockerfile
+      dockerfile: docker/telegram_bot/Dockerfile.local
     container_name: telegram_bot
     env_file:
       - .env
@@ -18,7 +18,7 @@ services:
   http_server:
     build:
       context: .
-      dockerfile: docker/http_server/local.Dockerfile
+      dockerfile: docker/http_server/Dockerfile.local
     container_name: http_server
     env_file:
       - .env
