@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/service"
 	"github.com/eerzho/event_manager/pkg/logger"
 	"gopkg.in/telebot.v3"
@@ -30,7 +30,7 @@ func newCommand(l logger.Logger, bot *telebot.Bot, tgUserService *service.TGUser
 func (c *command) start(ctx telebot.Context) error {
 	const op = "./internal/handler/telegram/v1/command::start"
 
-	user := model.TGUser{
+	user := entity.TGUser{
 		Username: ctx.Sender().Username,
 		ChatID:   strconv.FormatInt(ctx.Sender().ID, 10),
 	}

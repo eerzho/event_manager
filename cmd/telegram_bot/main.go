@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	const op = "./cmd/app::main"
+	const op = "./cmd/telegram_bot::main"
 
 	cfg, err := config.New()
 	if err != nil {
@@ -41,7 +41,6 @@ func main() {
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService)
 
 	// handler
-	//httpServer := http.New(l, cfg, tgUserService, tgMessageService)
 	telegramBot, err := telegram.New(l, cfg, tgUserService, tgMessageService)
 
 	if err != nil {
@@ -51,23 +50,16 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	//go func() {
-	//	httpServer.Run()
-	//}()
 	go func() {
 		telegramBot.Run()
 	}()
 
-	log.Printf("%s: application started", op)
+	log.Printf("%s: telegram bot started", op)
 	<-stopChan
 
 	log.Printf("%s: shutting down", op)
 
-	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//defer cancel()
-
-	//httpServer.Shutdown(ctx)
 	telegramBot.Shutdown()
 
-	log.Printf("%s: application stopped", op)
+	log.Printf("%s: telegram bot stopped", op)
 }

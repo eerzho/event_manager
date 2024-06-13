@@ -5,15 +5,15 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/failure"
-	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/logger"
 )
 
 type (
 	TGMessageRepo interface {
-		All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error)
-		Create(ctx context.Context, message *model.TGMessage) error
+		All(ctx context.Context, chatID string, page, count int) ([]entity.TGMessage, error)
+		Create(ctx context.Context, message *entity.TGMessage) error
 	}
 
 	TGMessage struct {
@@ -35,7 +35,7 @@ func NewTGMessage(l logger.Logger, repo TGMessageRepo, tgUserService *TGUser, ev
 	}
 }
 
-func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error) {
+func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]entity.TGMessage, error) {
 	const op = "./internal/service.tg_message::All"
 
 	messages, err := t.repo.All(ctx, chatID, page, count)
@@ -47,7 +47,7 @@ func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]
 	return messages, nil
 }
 
-func (t *TGMessage) Text(ctx context.Context, message *model.TGMessage) error {
+func (t *TGMessage) Text(ctx context.Context, message *entity.TGMessage) error {
 	const op = "./internal/service/tg_message::Text"
 
 	defer func() {
@@ -58,7 +58,7 @@ func (t *TGMessage) Text(ctx context.Context, message *model.TGMessage) error {
 		}
 	}()
 
-	var event model.Event
+	var event entity.Event
 	if err := t.eventService.CreateFromText(ctx, &event, message.Text); err != nil {
 		if errors.Is(err, failure.ErrValidation) && event.Message != "" {
 			message.Answer = event.Message

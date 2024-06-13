@@ -55,7 +55,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TGMessage"
+                                                "$ref": "#/definitions/entity.TGMessage"
                                             }
                                         }
                                     }
@@ -125,7 +125,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TGUser"
+                                                "$ref": "#/definitions/entity.TGUser"
                                             }
                                         }
                                     }
@@ -144,7 +144,7 @@
         }
     },
     "definitions": {
-        "model.TGMessage": {
+        "entity.TGMessage": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -164,7 +164,7 @@
                 }
             }
         },
-        "model.TGUser": {
+        "entity.TGUser": {
             "type": "object",
             "properties": {
                 "chat_id": {

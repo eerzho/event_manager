@@ -1,4 +1,4 @@
-package model
+package entity
 
 type Event struct {
 	Text      string `json:"text" validate:"required"`

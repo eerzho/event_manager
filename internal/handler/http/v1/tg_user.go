@@ -34,7 +34,7 @@ func newTGUser(l logger.Logger, router *gin.RouterGroup, tgUserService *service.
 // @Param chat_id query string false "ChatID"
 // @Param page query int false "Page"
 // @Param count query int false "Count"
-// @Success 200 {object} successResponse{data=[]model.TGUser}
+// @Success 200 {object} successResponse{data=[]entity.TGUser}
 // @Failure 500 {object} errorResponse
 // @Router /tg-users [get]
 func (t *tgUser) all(ctx *gin.Context) {

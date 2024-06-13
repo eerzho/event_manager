@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/service"
 	"github.com/eerzho/event_manager/pkg/logger"
 	"gopkg.in/telebot.v3"
@@ -34,7 +34,7 @@ func (m *message) text(ctx telebot.Context) error {
 
 	chatID := strconv.FormatInt(ctx.Sender().ID, 10)
 
-	user := model.TGUser{
+	user := entity.TGUser{
 		Username: ctx.Sender().Username,
 		ChatID:   chatID,
 	}
@@ -42,7 +42,7 @@ func (m *message) text(ctx telebot.Context) error {
 		m.l.Error(fmt.Errorf("%s: %w", op, err))
 	}
 
-	msg := model.TGMessage{
+	msg := entity.TGMessage{
 		Text:   ctx.Message().Text,
 		ChatID: chatID,
 	}

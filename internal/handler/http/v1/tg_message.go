@@ -33,7 +33,7 @@ func newTGMessage(l logger.Logger, router *gin.RouterGroup, tgMessageService *se
 // @Param chat_id query string false "ChatID"
 // @Param page query int false "Page"
 // @Param count query int false "Count"
-// @Success 200 {object} successResponse{data=[]model.TGMessage}
+// @Success 200 {object} successResponse{data=[]entity.TGMessage}
 // @Failure 500 {object} errorResponse
 // @Router /tg-messages [get]
 func (t *tgMessage) all(ctx *gin.Context) {

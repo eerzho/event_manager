@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/pkg/mongo"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,10 +21,10 @@ func NewTGMessage(m *mongo.Mongo) *TGMessage {
 	return &TGMessage{m}
 }
 
-func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]model.TGMessage, error) {
+func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]entity.TGMessage, error) {
 	const op = "./internal/repo/mongo_repo/tg_user::All"
 
-	var messages []model.TGMessage
+	var messages []entity.TGMessage
 	filter := bson.D{}
 	if chatID != "" {
 		filter = append(filter, bson.E{Key: "chat_id", Value: chatID})
@@ -47,7 +47,7 @@ func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		var message model.TGMessage
+		var message entity.TGMessage
 		if err := cursor.Decode(&message); err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -61,7 +61,7 @@ func (t *TGMessage) All(ctx context.Context, chatID string, page, count int) ([]
 	return messages, nil
 }
 
-func (t *TGMessage) Create(ctx context.Context, message *model.TGMessage) error {
+func (t *TGMessage) Create(ctx context.Context, message *entity.TGMessage) error {
 	const op = "./internal/repo/mongo_repo/tg_message::Create"
 
 	message.ID = uuid.New().String()

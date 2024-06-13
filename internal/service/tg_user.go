@@ -5,16 +5,16 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/failure"
-	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/logger"
 )
 
 type (
 	TGUserRepo interface {
-		All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error)
-		ByChatID(ctx context.Context, chatID string) (*model.TGUser, error)
-		Create(ctx context.Context, user *model.TGUser) error
+		All(ctx context.Context, username, chatID string, page, count int) ([]entity.TGUser, error)
+		ByChatID(ctx context.Context, chatID string) (*entity.TGUser, error)
+		Create(ctx context.Context, user *entity.TGUser) error
 	}
 
 	TGUser struct {
@@ -27,7 +27,7 @@ func NewTGUser(l logger.Logger, repo TGUserRepo) *TGUser {
 	return &TGUser{l: l, repo: repo}
 }
 
-func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error) {
+func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]entity.TGUser, error) {
 	const op = "./internal/service/tg_user::All"
 
 	users, err := t.repo.All(ctx, username, chatID, page, count)
@@ -39,7 +39,7 @@ func (t *TGUser) All(ctx context.Context, username, chatID string, page, count i
 	return users, nil
 }
 
-func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, error) {
+func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*entity.TGUser, error) {
 	const op = "./internal/service/tg_user::ByChatID"
 
 	user, err := t.repo.ByChatID(ctx, chatID)
@@ -51,7 +51,7 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 	return user, nil
 }
 
-func (t *TGUser) Create(ctx context.Context, user *model.TGUser) error {
+func (t *TGUser) Create(ctx context.Context, user *entity.TGUser) error {
 	const op = "./internal/service/tg_user::Create"
 
 	exUser, err := t.ByChatID(ctx, user.ChatID)

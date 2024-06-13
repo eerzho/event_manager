@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/failure"
-	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/sashabaranov/go-openai"
@@ -28,7 +28,7 @@ func NewEvent(l logger.Logger, token, prompt string) *Event {
 	}
 }
 
-func (e *Event) CreateFromText(ctx context.Context, event *model.Event, text string) error {
+func (e *Event) CreateFromText(ctx context.Context, event *entity.Event, text string) error {
 	const op = "./internal/service/event::CreateFromText"
 
 	messages := []openai.ChatCompletionMessage{

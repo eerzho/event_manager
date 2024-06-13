@@ -1,6 +1,6 @@
 FROM golang:1.22
 
-WORKDIR /app
+WORKDIR /http_server
 COPY . .
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest

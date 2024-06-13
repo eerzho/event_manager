@@ -62,7 +62,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TGMessage"
+                                                "$ref": "#/definitions/entity.TGMessage"
                                             }
                                         }
                                     }
@@ -132,7 +132,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TGUser"
+                                                "$ref": "#/definitions/entity.TGUser"
                                             }
                                         }
                                     }
@@ -151,7 +151,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.TGMessage": {
+        "entity.TGMessage": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -171,7 +171,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.TGUser": {
+        "entity.TGUser": {
             "type": "object",
             "properties": {
                 "chat_id": {

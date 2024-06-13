@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/eerzho/event_manager/internal/model"
+	"github.com/eerzho/event_manager/internal/entity"
 )
 
 type GoogleCalendar struct {
@@ -17,7 +17,7 @@ func NewGoogleCalendar(url string) *GoogleCalendar {
 	return &GoogleCalendar{url: url}
 }
 
-func (g *GoogleCalendar) CreateUrl(ctx context.Context, event *model.Event) string {
+func (g *GoogleCalendar) CreateUrl(ctx context.Context, event *entity.Event) string {
 	const op = "./internal/service/google_calendar::CreateUrl"
 
 	params := url.Values{}

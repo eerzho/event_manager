@@ -1,4 +1,4 @@
-package model
+package entity
 
 type TGMessage struct {
 	ID     string `bson:"_id,omitempty" json:"id"`

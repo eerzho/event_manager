@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/failure"
-	"github.com/eerzho/event_manager/internal/model"
 	"github.com/eerzho/event_manager/pkg/mongo"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,10 +24,10 @@ func NewTGUser(m *mongo.Mongo) *TGUser {
 	return &TGUser{m}
 }
 
-func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]model.TGUser, error) {
+func (t *TGUser) All(ctx context.Context, username, chatID string, page, count int) ([]entity.TGUser, error) {
 	const op = "./internal/repo/mongo_repo/tg_user::All"
 
-	var users []model.TGUser
+	var users []entity.TGUser
 
 	filter := bson.D{}
 	if username != "" {
@@ -56,7 +56,7 @@ func (t *TGUser) All(ctx context.Context, username, chatID string, page, count i
 	}()
 
 	for cursor.Next(ctx) {
-		var user model.TGUser
+		var user entity.TGUser
 		if err := cursor.Decode(&user); err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -70,10 +70,10 @@ func (t *TGUser) All(ctx context.Context, username, chatID string, page, count i
 	return users, nil
 }
 
-func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, error) {
+func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*entity.TGUser, error) {
 	const op = "./internal/repo/mongo_repo/tg_user::ByChatID"
 
-	var user model.TGUser
+	var user entity.TGUser
 
 	filter := bson.D{{"chat_id", chatID}}
 
@@ -88,7 +88,7 @@ func (t *TGUser) ByChatID(ctx context.Context, chatID string) (*model.TGUser, er
 	return &user, nil
 }
 
-func (t *TGUser) Create(ctx context.Context, user *model.TGUser) error {
+func (t *TGUser) Create(ctx context.Context, user *entity.TGUser) error {
 	const op = "./internal/repo/mongo_repo/tg_user::Create"
 
 	user.ID = uuid.New().String()
