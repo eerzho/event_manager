@@ -18,7 +18,7 @@ type Bot struct {
 }
 
 func New(l logger.Logger, cfg *config.Config, tgUserService *service.TGUser, tgMessageService *service.TGMessage) (*Bot, error) {
-	url := fmt.Sprintf("%s/wb", strings.Trim(cfg.Domain, "/"))
+	url := fmt.Sprintf("%s/wb", strings.Trim(cfg.Telegram.Domain, "/"))
 	settings := telebot.Settings{
 		Token: cfg.Telegram.Token,
 		Poller: &telebot.Webhook{
