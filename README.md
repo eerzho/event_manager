@@ -4,7 +4,7 @@
 
 1. Create a `.env` file based on the example provided in `.env.example`.
 2. Download and install [ngrok](https://ngrok.com/).
-3. Run `ngrok http TELEGRAM_PORT` and add the resulting URL to your `.env` file under the key `DOMAIN`.
+3. Run `ngrok http TELEGRAM_PORT` and add the resulting URL to your `.env` file under the key `TELEGRAM_DOMAIN`.
 
 ## Launch with Docker Compose
 
