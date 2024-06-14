@@ -2,14 +2,12 @@ package config
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type (
 	Config struct {
-		Domain string `env:"DOMAIN" env-default:"localhost"`
 		Log
 		HTTP
 		Telegram
@@ -23,12 +21,14 @@ type (
 	}
 
 	HTTP struct {
-		Port string `env:"HTTP_PORT" env-default:"8080"`
+		Port   string `env:"HTTP_PORT" env-default:"8080"`
+		Domain string `env:"HTTP_DOMAIN" env-required:"true"`
 	}
 
 	Telegram struct {
-		Port  string `env:"TELEGRAM_PORT" env-default:"8081"`
-		Token string `env:"TELEGRAM_TOKEN" env-required:"true" `
+		Port   string `env:"TELEGRAM_PORT" env-default:"8081"`
+		Domain string `env:"TELEGRAM_DOMAIN" env-required:"true"`
+		Token  string `env:"TELEGRAM_TOKEN" env-required:"true" `
 	}
 
 	Mongo struct {
@@ -51,11 +51,6 @@ func New() (*Config, error) {
 
 	if err := cleanenv.ReadEnv(cfg); err != nil {
 		return nil, fmt.Errorf("./config::New: %w", err)
-	}
-
-	// heroku
-	if port := os.Getenv("PORT"); port != "" {
-		cfg.HTTP.Port = port
 	}
 
 	return cfg, nil

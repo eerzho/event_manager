@@ -13,7 +13,6 @@ import (
 // Swagger spec:
 // @Title       Event manager tg bot api
 // @Version     1.0
-// @Host        localhost:80
 // @BasePath    /api/v1
 func NewHandler(l logger.Logger, router *gin.Engine, tgUserService *service.TGUser, tgMessageService *service.TGMessage) {
 	swaggerHandler := ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER_HTTP_HANDLER")

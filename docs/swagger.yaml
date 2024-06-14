@@ -31,7 +31,6 @@ definitions:
     properties:
       data: {}
     type: object
-host: localhost:80
 info:
   contact: {}
   title: Event manager tg bot api
