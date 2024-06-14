@@ -23,11 +23,11 @@ type (
 	}
 
 	HTTP struct {
-		Port string `env:"HTTP_PORT" env-default:"80"`
+		Port string `env:"HTTP_PORT" env-default:"8080"`
 	}
 
 	Telegram struct {
-		Port  string `env:"TELEGRAM_PORT" env-default:"443"`
+		Port  string `env:"TELEGRAM_PORT" env-default:"80"`
 		Token string `env:"TELEGRAM_TOKEN" env-required:"true" `
 	}
 
