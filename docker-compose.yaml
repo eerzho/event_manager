@@ -45,9 +45,9 @@ services:
     container_name: nginx
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./docker/nginx/selfsigned.crt:/etc/nginx/selfsigned.crt
-      - ./docker/nginx/selfsigned.key:/etc/nginx/selfsigned.key
+      - ./docker/nginx/conf/local.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/cert/${DOMAIN}/fullchain.pem:/etc/nginx/fullchain.pem
+      - ./docker/nginx/cert/${DOMAIN}/privkey.pem:/etc/nginx/privkey.pem
     ports:
       - "80:80"
       - "443:443"
