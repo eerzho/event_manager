@@ -14,12 +14,6 @@ services:
       - .:/telegram_bot
     depends_on:
       - mongo
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://telegram_bot:${TELEGRAM_PORT}" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   http_server:
     build:
@@ -34,12 +28,6 @@ services:
       - .:/http_server
     depends_on:
       - mongo
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://http_server:${HTTP_PORT}" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   mongo:
     image: mongo:latest
@@ -51,11 +39,6 @@ services:
       - "${MONGO_PORT}:${MONGO_PORT}"
     volumes:
       - mongo_data:/data/db
-    healthcheck:
-      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   nginx:
     image: nginx
@@ -69,10 +52,8 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      telegram_bot:
-        condition: service_healthy
-      http_server:
-        condition: service_healthy
+      - telegram_bot
+      - http_server
     restart: unless-stopped
 
 volumes:
