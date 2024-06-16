@@ -22,16 +22,25 @@ type (
 		tgUserService         *TGUser
 		eventService          *Event
 		googleCalendarService *GoogleCalendar
+		appleCalendar         *AppleCalendar
 	}
 )
 
-func NewTGMessage(l logger.Logger, repo TGMessageRepo, tgUserService *TGUser, eventService *Event, googleCalendarService *GoogleCalendar) *TGMessage {
+func NewTGMessage(
+	l logger.Logger,
+	repo TGMessageRepo,
+	tgUserService *TGUser,
+	eventService *Event,
+	googleCalendarService *GoogleCalendar,
+	appleCalendar *AppleCalendar,
+) *TGMessage {
 	return &TGMessage{
 		l:                     l,
 		repo:                  repo,
 		tgUserService:         tgUserService,
 		eventService:          eventService,
 		googleCalendarService: googleCalendarService,
+		appleCalendar:         appleCalendar,
 	}
 }
 
@@ -70,6 +79,13 @@ func (t *TGMessage) Text(ctx context.Context, message *entity.TGMessage) error {
 
 	url := t.googleCalendarService.CreateUrl(ctx, &event)
 	message.Answer = "[Google Calendar](" + url + ")"
+
+	file, err := t.appleCalendar.CreateFile(ctx, &event)
+	if err != nil {
+		t.l.Error(fmt.Errorf("%s: %w", op, err))
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	message.File = file
 
 	return nil
 }

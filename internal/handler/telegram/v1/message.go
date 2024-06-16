@@ -3,7 +3,9 @@ package v1
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/eerzho/event_manager/internal/entity"
 	"github.com/eerzho/event_manager/internal/service"
@@ -48,13 +50,32 @@ func (m *message) text(ctx telebot.Context) error {
 	}
 	if err := m.tgMessageService.Text(context.Background(), &msg); err != nil {
 		m.l.Error(fmt.Errorf("%s: %w", op, err))
-		return ctx.Send("Что-то пошло не так (")
+	}
+	defer func() {
+		if msg.File != "" {
+			if err := os.Remove(msg.File); err != nil {
+				m.l.Error(fmt.Errorf("%s: %w", op, err))
+			}
+		}
+	}()
+
+	// send google calendar link
+	if msg.Answer != "" {
+		if err := ctx.Send(msg.Answer, &telebot.SendOptions{ParseMode: telebot.ModeMarkdown, ReplyTo: ctx.Message()}); err != nil {
+			m.l.Error(fmt.Errorf("%s: %w", op, err))
+			return err
+		}
 	}
 
-	options := telebot.SendOptions{
-		ParseMode: telebot.ModeMarkdown,
-		ReplyTo:   ctx.Message(),
+	// send file for apple calendar
+	if msg.File != "" {
+		file := telebot.FromDisk(msg.File)
+		doc := telebot.Document{File: file, FileName: strings.Replace(strings.ToLower(ctx.Message().Text), " ", "_", -1) + ".ics", MIME: "text/calendar"}
+		if err := ctx.Send(&doc); err != nil {
+			m.l.Error(fmt.Errorf("%s: %w", op, err))
+			return err
+		}
 	}
 
-	return ctx.Send(msg.Answer, &options)
+	return nil
 }

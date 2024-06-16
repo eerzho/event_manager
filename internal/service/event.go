@@ -36,7 +36,7 @@ func (e *Event) CreateFromText(ctx context.Context, event *entity.Event, text st
 		{Role: openai.ChatMessageRoleUser, Content: text},
 	}
 	req := openai.ChatCompletionRequest{
-		Model:    openai.GPT3Dot5Turbo,
+		Model:    openai.GPT4o,
 		Messages: messages,
 	}
 	resp, err := e.openai.CreateChatCompletion(ctx, req)
