@@ -26,7 +26,7 @@ type Mongo struct {
 }
 
 func New(url, dbName string, opts ...Option) (*Mongo, error) {
-	const op = "./pkg/mongo::New"
+	const op = "mongo"
 
 	mg := &Mongo{
 		maxPoolSize:  _defaultMaxPoolSize,

@@ -40,7 +40,7 @@ func main() {
 	tgUserService := service.NewTGUser(l, tgUserRepo)
 	eventService := service.NewEvent(l, cfg.GPT.Token, cfg.GPT.Prompt)
 	googleCalendarService := service.NewGoogleCalendar(cfg.Google.CalendarURL)
-	appleCalendar := service.NewAppleCalendar()
+	appleCalendar := service.NewAppleCalendar(l)
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService, appleCalendar)
 
 	// handler

@@ -41,12 +41,12 @@ func (e *Event) CreateFromText(ctx context.Context, event *entity.Event, text st
 	}
 	resp, err := e.openai.CreateChatCompletion(ctx, req)
 	if err != nil {
-		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		e.l.Debug(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	if len(resp.Choices) < 1 {
-		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		e.l.Debug(fmt.Errorf("%s: choices is empty", op))
 		return fmt.Errorf("%s: choices is empty", op)
 	}
 
@@ -54,11 +54,11 @@ func (e *Event) CreateFromText(ctx context.Context, event *entity.Event, text st
 	jsonString := strings.Replace(strings.Replace(choice.Message.Content, "json", "", -1), "`", "", -1)
 
 	if err = json.Unmarshal([]byte(jsonString), &event); err != nil {
-		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		e.l.Debug(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, err)
 	}
 	if err = validator.New().Struct(event); err != nil {
-		e.l.Error(fmt.Errorf("%s: %w", op, err))
+		e.l.Debug(fmt.Errorf("%s: %w", op, err))
 		return fmt.Errorf("%s: %w", op, failure.ErrValidation)
 	}
 

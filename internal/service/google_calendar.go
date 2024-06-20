@@ -18,8 +18,6 @@ func NewGoogleCalendar(url string) *GoogleCalendar {
 }
 
 func (g *GoogleCalendar) CreateUrl(ctx context.Context, event *entity.Event) string {
-	const op = "./internal/service/google_calendar::CreateUrl"
-
 	params := url.Values{}
 	params.Add("action", "TEMPLATE")
 	params.Add("text", event.Text)

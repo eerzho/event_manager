@@ -59,21 +59,28 @@ func (m *message) text(ctx telebot.Context) error {
 		}
 	}()
 
-	// send google calendar link
-	if msg.Answer != "" {
-		if err := ctx.Send(msg.Answer, &telebot.SendOptions{ParseMode: telebot.ModeMarkdown, ReplyTo: ctx.Message()}); err != nil {
+	if msg.Answer == "" && msg.File == "" {
+		if err := ctx.Send("Пожалуйста, повторите попытку позже"); err != nil {
 			m.l.Error(fmt.Errorf("%s: %w", op, err))
 			return err
 		}
-	}
+	} else {
+		// send google calendar link
+		if msg.Answer != "" {
+			if err := ctx.Send(msg.Answer, &telebot.SendOptions{ParseMode: telebot.ModeMarkdown, ReplyTo: ctx.Message()}); err != nil {
+				m.l.Error(fmt.Errorf("%s: %w", op, err))
+				return err
+			}
+		}
 
-	// send file for apple calendar
-	if msg.File != "" {
-		file := telebot.FromDisk(msg.File)
-		doc := telebot.Document{File: file, FileName: strings.Replace(strings.ToLower(ctx.Message().Text), " ", "_", -1) + ".ics", MIME: "text/calendar"}
-		if err := ctx.Send(&doc); err != nil {
-			m.l.Error(fmt.Errorf("%s: %w", op, err))
-			return err
+		// send file for apple calendar
+		if msg.File != "" {
+			file := telebot.FromDisk(msg.File)
+			doc := telebot.Document{File: file, FileName: strings.Replace(strings.ToLower(ctx.Message().Text), " ", "_", -1) + ".ics", MIME: "text/calendar"}
+			if err := ctx.Send(&doc); err != nil {
+				m.l.Error(fmt.Errorf("%s: %w", op, err))
+				return err
+			}
 		}
 	}
 

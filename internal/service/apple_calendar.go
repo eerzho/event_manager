@@ -9,34 +9,40 @@ import (
 	"strings"
 
 	"github.com/eerzho/event_manager/internal/entity"
+	"github.com/eerzho/event_manager/pkg/logger"
 )
 
 type AppleCalendar struct {
+	l logger.Logger
 }
 
-func NewAppleCalendar() *AppleCalendar {
-	return &AppleCalendar{}
+func NewAppleCalendar(l logger.Logger) *AppleCalendar {
+	return &AppleCalendar{
+		l: l,
+	}
 }
 
 func (a *AppleCalendar) CreateFile(ctx context.Context, event *entity.Event) (string, error) {
 	const op = "./internal/service/apple_calendar::CreateFile"
 
-	filePath := filepath.Join(os.TempDir(), a.icsFilename(event))
+	filePath := filepath.Join(os.TempDir(), a.icsFilename(ctx, event))
 	file, err := os.Create(filePath)
 	if err != nil {
+		a.l.Debug(fmt.Errorf("%s: %w", op, err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 	defer file.Close()
 
-	_, err = file.Write([]byte(a.icsContent(event)))
+	_, err = file.Write([]byte(a.icsContent(ctx, event)))
 	if err != nil {
+		a.l.Debug(fmt.Errorf("%s: %w", op, err))
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	return filePath, nil
 }
 
-func (a *AppleCalendar) icsFilename(event *entity.Event) string {
+func (a *AppleCalendar) icsFilename(ctx context.Context, event *entity.Event) string {
 	filename := fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 		event.Text,
 		event.StartDate,
@@ -52,7 +58,7 @@ func (a *AppleCalendar) icsFilename(event *entity.Event) string {
 	return fmt.Sprintf("%x", hash)
 }
 
-func (a *AppleCalendar) icsContent(event *entity.Event) string {
+func (a *AppleCalendar) icsContent(ctx context.Context, event *entity.Event) string {
 	var icsContent string
 
 	if event.CTZ != "" {

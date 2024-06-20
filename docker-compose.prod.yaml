@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  telegram_bot:
+  event_manager_bot:
     build:
       context: .
       dockerfile: docker/telegram_bot/Dockerfile.prod
 
-  http_server:
+  event_manager_server:
     build:
       context: .
       dockerfile: docker/http_server/Dockerfile.prod
