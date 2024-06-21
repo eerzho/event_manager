@@ -20,7 +20,13 @@ func New(key string) *Crypter {
 func (c *Crypter) Encrypt(decrypted string) string {
 	const op = "crypter::Encrypt"
 
-	block, err := aes.NewCipher([]byte(c.key))
+	decodedKey, err := base64.URLEncoding.DecodeString(c.key)
+	if err != nil {
+		log.Printf("%s: %v\n", op, err)
+		return ""
+	}
+
+	block, err := aes.NewCipher(decodedKey)
 	if err != nil {
 		log.Printf("%s: %v\n", op, err)
 		return ""
@@ -43,7 +49,13 @@ func (c *Crypter) Encrypt(decrypted string) string {
 func (c *Crypter) Decrypt(encrypted string) string {
 	const op = "crypter::Decrypt"
 
-	block, err := aes.NewCipher([]byte(c.key))
+	decodedKey, err := base64.URLEncoding.DecodeString(c.key)
+	if err != nil {
+		log.Printf("%s: %v\n", op, err)
+		return ""
+	}
+
+	block, err := aes.NewCipher(decodedKey)
 	if err != nil {
 		log.Printf("%s: %v\n", op, err)
 		return ""
