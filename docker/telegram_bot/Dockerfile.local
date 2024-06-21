@@ -10,4 +10,4 @@ COPY ./config ./config
 COPY ./internal ./internal
 COPY ./pkg ./pkg
 
-CMD ["sh", "-c", "while :; do sleep 1; done"]
+CMD ["go", "run", "./cmd/telegram_bot"]

@@ -20,6 +20,10 @@ type (
 		Level string `env:"LOG_LEVEL" env-default:"info"`
 	}
 
+	Crypter struct {
+		Key string `env:"CRYPTER_KEY" env-required:"true"`
+	}
+
 	HTTP struct {
 		Port   string `env:"HTTP_PORT" env-default:"8080"`
 		Domain string `env:"HTTP_DOMAIN" env-required:"true"`
@@ -41,6 +45,7 @@ type (
 	}
 
 	GPT struct {
+		Model  string `env:"GPT_MODEL" env-default:"gpt-3.5-turbo"`
 		Token  string `env:"GPT_TOKEN" env-required:"true"`
 		Prompt string `env:"GPT_PROMPT" env-required:"true"`
 	}

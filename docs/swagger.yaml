@@ -6,6 +6,8 @@ definitions:
         type: string
       chat_id:
         type: string
+      created_at:
+        type: string
       file:
         type: string
       id:
@@ -16,6 +18,8 @@ definitions:
   entity.TGUser:
     properties:
       chat_id:
+        type: string
+      created_at:
         type: string
       id:
         type: string

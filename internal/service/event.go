@@ -17,13 +17,15 @@ import (
 type Event struct {
 	l      logger.Logger
 	openai *openai.Client
+	model  string
 	prompt string
 }
 
-func NewEvent(l logger.Logger, token, prompt string) *Event {
+func NewEvent(l logger.Logger, model, token, prompt string) *Event {
 	return &Event{
 		l:      l,
 		openai: openai.NewClient(token),
+		model:  model,
 		prompt: prompt,
 	}
 }
@@ -36,7 +38,7 @@ func (e *Event) CreateFromText(ctx context.Context, event *entity.Event, text st
 		{Role: openai.ChatMessageRoleUser, Content: text},
 	}
 	req := openai.ChatCompletionRequest{
-		Model:    openai.GPT4o,
+		Model:    e.model,
 		Messages: messages,
 	}
 	resp, err := e.openai.CreateChatCompletion(ctx, req)

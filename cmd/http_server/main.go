@@ -12,6 +12,7 @@ import (
 	"github.com/eerzho/event_manager/internal/app/http"
 	"github.com/eerzho/event_manager/internal/repo/mongo_repo"
 	"github.com/eerzho/event_manager/internal/service"
+	"github.com/eerzho/event_manager/pkg/crypter"
 	"github.com/eerzho/event_manager/pkg/logger"
 	"github.com/eerzho/event_manager/pkg/mongo"
 )
@@ -31,14 +32,15 @@ func main() {
 	defer mg.Close()
 
 	l := logger.New(cfg.Level)
+	c := crypter.New("examplekey123456")
 
 	// repo
 	tgUserRepo := mongo_repo.NewTGUser(mg)
-	tgMessageRepo := mongo_repo.NewTGMessage(mg)
+	tgMessageRepo := mongo_repo.NewTGMessage(mg, c)
 
 	// service
 	tgUserService := service.NewTGUser(l, tgUserRepo)
-	eventService := service.NewEvent(l, cfg.GPT.Token, cfg.GPT.Prompt)
+	eventService := service.NewEvent(l, cfg.GPT.Model, cfg.GPT.Token, cfg.GPT.Prompt)
 	googleCalendarService := service.NewGoogleCalendar(cfg.Google.CalendarURL)
 	appleCalendar := service.NewAppleCalendar(l)
 	tgMessageService := service.NewTGMessage(l, tgMessageRepo, tgUserService, eventService, googleCalendarService, appleCalendar)

@@ -160,6 +160,9 @@ const docTemplate = `{
                 "chat_id": {
                     "type": "string"
                 },
+                "created_at": {
+                    "type": "string"
+                },
                 "file": {
                     "type": "string"
                 },
@@ -175,6 +178,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "chat_id": {
+                    "type": "string"
+                },
+                "created_at": {
                     "type": "string"
                 },
                 "id": {

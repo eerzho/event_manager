@@ -10,17 +10,12 @@
 
 1. Build and start the containers:
    ```bash
-   docker compose up --detach --build
+   make build
    ```
 
-2. Run the telegram bot:
+2. Run the bot:
    ```bash
-   docker compose exec event_manager_bot go run ./cmd/telegram_bot
-   ```
-   
-3. Run the http server:
-   ```bash
-   docker compose exec event_manager_server go run ./cmd/http_server
+   make start
    ```
    
    The HTTP server will be running on the port specified by `HTTP_PORT`, and the Telegram bot will be running on the
