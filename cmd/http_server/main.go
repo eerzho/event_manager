@@ -31,7 +31,7 @@ func main() {
 	}
 	defer mg.Close()
 
-	l := logger.New(cfg.Level)
+	l := logger.New(cfg.Log.Level)
 	c := crypter.New(cfg.Crypter.Key)
 
 	// repo
