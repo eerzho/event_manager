@@ -5,7 +5,6 @@ go 1.22.3
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.20.0
-	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/sashabaranov/go-openai v1.24.1
 	github.com/swaggo/files v1.0.1
