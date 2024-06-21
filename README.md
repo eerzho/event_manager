@@ -8,12 +8,12 @@
 
 ## Launch with Docker Compose
 
-1. Build and start the containers:
+1. Build the bot:
    ```bash
    make build
    ```
 
-2. Run the bot:
+2. Start the bot:
    ```bash
    make start
    ```
