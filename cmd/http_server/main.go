@@ -32,7 +32,7 @@ func main() {
 	defer mg.Close()
 
 	l := logger.New(cfg.Level)
-	c := crypter.New("examplekey123456")
+	c := crypter.New(cfg.Crypter.Key)
 
 	// repo
 	tgUserRepo := mongo_repo.NewTGUser(mg)

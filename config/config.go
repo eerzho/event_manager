@@ -9,6 +9,7 @@ import (
 type (
 	Config struct {
 		Log
+		Crypter
 		HTTP
 		Telegram
 		Mongo
