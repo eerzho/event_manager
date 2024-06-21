@@ -33,8 +33,8 @@ endif
 .PHONY: restart
 
 build: ## Run docker compose build
-ifdef prod
-	docker compose -f docker-compose.prod.yaml build
+ifdef file
+	docker compose -f $(file) build
 else
 	docker compose build
 endif
@@ -48,3 +48,11 @@ else
 	exit 1
 endif
 .PHONY: sh
+
+logs:
+ifdef name
+	docker compose logs -f $(name)
+else
+	docker compose logs -f
+endif
+.PHONY: logs
